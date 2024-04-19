@@ -40,11 +40,19 @@ function payFine() {
     let creditCardNumberValue = creditCardNumber.value;
     let cvvValue = cvv.value;
 
-    let fineMatch = DB.find(fine => fine.fineNumber === fineNumberValue && fine.amount === amountValue);
+    let fineMatch = DB.find(fine => Number(fine.номер) === Number(fineNumberValue) && fine.сума === amountValue);
 
     // Check for fine number and amount match
     if (!fineMatch) {
-        if (!DB.some(fine => fine.fineNumber === fineNumberValue)) {
+        if (!DB.some(fine => {
+            // console.log(`Fine num(entered): ${fine}\nNum in BD: ${fineNumberValue}`);
+            console.log("fineNumberValue:");
+            console.log(fineNumberValue);
+            console.log("fine:");
+            console.log(fine);
+            return Number(fine.номер) === Number(fineNumberValue);
+        })) {
+
             console.log("Номер не співпадає");
         } else {
             console.log("Сума не співпадає");
