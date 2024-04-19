@@ -32,7 +32,48 @@ alert "Номер не співпадає" або "Сума не співпад�
 Якщо валідація проходить успішно, то виконати оплату,
  тобто вам потрібно видалити обєкт з DB
  */
-buttonSubmit.addEventListener('click',payFine);
-function payFine(){
+
+function payFine() {
+    let fineNumberValue = fineNumber.value;
+    let amountValue = parseFloat(amount.value);
+    let passportValue = passport.value;
+    let creditCardNumberValue = creditCardNumber.value;
+    let cvvValue = cvv.value;
+
+    let fineMatch = DB.find(fine => fine.fineNumber === fineNumberValue && fine.amount === amountValue);
+
+    // Check for fine number and amount match
+    if (!fineMatch) {
+        if (!DB.some(fine => fine.fineNumber === fineNumberValue)) {
+            console.log("Номер не співпадає");
+        } else {
+            console.log("Сума не співпадає");
+        }
+        return;
+    }
+
+    // Validate passport
+    if (!/^[а-яА-Я]{2}\d{6}$/.test(passportValue)) {
+        console.log("Не вірний паспортний номер");
+        return;
+    }
+
+    // Validate credit card number
+    if (!/^\d{16}$/.test(creditCardNumberValue)) {
+        console.log("Не вірна кредитна картка");
+        return;
+    }
+
+    // Validate CVV
+    if (!/^\d{3}$/.test(cvvValue)) {
+        console.log("Не вірний cvv");
+        return;
+    }
+
+    // If all validations pass, remove the fine from the database
+    DB = DB.filter(fine => fine !== fineMatch);
+    console.log("Оплата успішно проведена");
 
 }
+
+buttonSubmit.addEventListener('click', payFine);
